@@ -20,10 +20,11 @@
                      <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
                  </div>
              </form>
-
+             @if(Auth::user()->role == 'admin')
             <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-5 me-16">
                 <a href="{{route('costume.form')}}">+ Tambah Kostum</a>
             </button>
+            @endif
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($costume as $data)
@@ -39,6 +40,7 @@
                     <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                         Pesan
                     </button>
+                @if(Auth::user()->role == 'admin')
                 <div class="flex flex-row justify-end">
                     <a href="{{ route('costume.form.edit', $data['id']) }}">
                         <i class="fa-duotone fa-solid fa-square-pen text-2xl text-blue-700"></i>
@@ -47,6 +49,7 @@
                         <i class="fa-duotone fa-solid fa-trash-can text-2xl ms-2 text-red-700"></i>
                         </a>
                     </div>
+                @endif
                 </div>
             </div>
             @endforeach

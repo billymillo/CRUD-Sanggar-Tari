@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class UserController extends Controller
@@ -20,6 +22,30 @@ class UserController extends Controller
         return view('user.index', compact('users'));
     }
 
+    public function showLogin()
+    {
+        return view('login.index');
+    }
+
+    public function loginAuth(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+        $login = $request->only(['email', 'password']);
+        if (Auth::attempt($login)) {
+            return redirect()->route('landingpage')->with('success', 'You Login Successfully');
+        } else {
+            return redirect()->back()->with('failed', 'Login Was failed');
+        }
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login.auth')->with('success', 'You Logout Successfully');
+    }
     /**
      * Show the form for creating a new resource.
      *

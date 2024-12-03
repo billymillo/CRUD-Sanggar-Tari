@@ -65,18 +65,23 @@
         }
 
     </style>
-
-    <nav class="flex justify-around align-middle w-full h-20 oldenburg-regular shadow hover:shadow-lg bg-white">
-        <img src="{{ asset('assets/logo.png') }}" alt="" class="size-14 mt-3">
-        <div class="flex flex-row">
-            <a href="/" class="px-4 py-2 mt-5">Home</a>
+    @if(Auth::check())
+    <nav class="flex justify-between align-middle w-full h-20 oldenburg-regular shadow hover:shadow-lg bg-white">
+        <img src="{{ asset('assets/logo.png') }}" alt="" class="size-14 mt-3 ms-10">
+        <div class="flex flex-row ms-24">
+            <a href="{{route('landingpage')}}" class="px-4 py-2 mt-5">Home</a>
             <a href="{{route('costume.gallery')}}" class="px-4 py-2 mt-5">Gallery</a>
+            @if (Auth::user()->role == 'admin')
             <a href="{{route('user.table')}}" class="px-4 py-2 mt-5">Akun</a>
+            @endif
+            <a href="{{route('logout')}}" class="px-4 py-2 mt-5 {{Route::is('logout') ? 'activate' : ''}}">Logout</a>
         </div>
-        <div class="flex flex-row">
-            <a href="/login" class="px-4 py-2 mt-5">Login</a>
+        <div class="flex flex-col">
+            <p class="px-4 mt-5 me-5">Nama : <span class="text-red-700">{{ Auth::user()->name }}</span></p>
+            <p class="px-4">Role : <span class="text-green-400">{{ Auth::user()->role }}</span></p>
         </div>
     </nav>
+    @endif
     @yield('content')
 </body>
 </html>

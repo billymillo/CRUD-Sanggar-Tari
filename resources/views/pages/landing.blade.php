@@ -1,6 +1,16 @@
 @extends('layout.index')
 
 @section('content')
+@if(Session::get('success'))
+    <div class="bg-green-500 text-white p-2">
+        {{ Session::get('success') }}
+    </div>
+@endif
+@if(Session::get('failed'))
+    <div class="bg-red-500 text-white p-2">
+        {{ Session::get('failed') }}
+    </div>
+@endif
 <div class="flex justify-center w-full mb-9">
     <img src="{{ asset('assets/ssiwhite.png') }}" class="size-1/4 mt-9 mb-4 rounded-full" alt="SSI Logo">
 </div>
