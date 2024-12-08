@@ -73,12 +73,15 @@
             <a href="{{route('costume.gallery')}}" class="px-4 py-2 mt-5">Gallery</a>
             @if (Auth::user()->role == 'admin')
             <a href="{{route('user.table')}}" class="px-4 py-2 mt-5">Akun</a>
+            <a href="{{route('order.chartadd')}}" class="px-4 py-2 mt-5">Keranjang</a>
             @endif
-            <a href="{{route('logout')}}" class="px-4 py-2 mt-5 {{Route::is('logout') ? 'activate' : ''}}">Logout</a>
         </div>
-        <div class="flex flex-col">
-            <p class="px-4 mt-5 me-5">Nama : <span class="text-red-700">{{ Auth::user()->name }}</span></p>
+        <div class="flex flex-row">
+            <a href="{{route('logout')}}" class="px-4 py-2 mt-5 text-red-700 {{Route::is('logout') ? 'activate' : ''}}">Logout</a>
+            <div class="flex flex-col">
+            <p class="px-4 mt-5 me-5">Nama : <span class="text-blue-700">{{ Auth::user()->name }}</span></p>
             <p class="px-4">Role : <span class="text-green-400">{{ Auth::user()->role }}</span></p>
+            </div>
         </div>
     </nav>
     @endif

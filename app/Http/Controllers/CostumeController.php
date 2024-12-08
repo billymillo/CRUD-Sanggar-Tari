@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+// use PDF;
 use App\Models\Costume;
 use Illuminate\Http\Request;
 
@@ -15,13 +15,24 @@ class CostumeController extends Controller
     public function index(Request $request)
     {
         $costume = Costume::where('name', 'LIKE', '%' . $request->search_costume . '%')
-        ->orderby('name', 'ASC')
         ->simplepaginate(5)
         ->appends($request->all());
 
         return view('costume.index', compact('costume'));
     }
 
+    // public function download()
+    // {
+    //     // Tentukan data yang akan dimunculkan di PDF file
+    //     // Harus bertipedata array
+    //     $costume = Costume::all();
+    //     // Buat nama variable yang akan digunakan di pdf
+    //     view()->share('costume', $costume);
+    //     // Panggil file blade yang akan diubah menjadi pdf file
+    //     $pdf = PDF::loadView('costume.pdf');
+    //     // Proses download dan nama file
+    //     return $pdf->download('pdf.pdf');
+    // }
     /**
      * Show the form for creating a new resource.
      *
@@ -47,11 +58,13 @@ class CostumeController extends Controller
             'stock' => 'required|numeric',
             'description' => 'required|max:255',
         ]);
+
         $costume = new Costume();
         $costume->name = $request->name;
         $costume->price = $request->price;
         $costume->stock = $request->stock;
         $costume->description = $request->description;
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = time() . '.' . $image->getClientOriginalExtension();
@@ -121,12 +134,11 @@ class CostumeController extends Controller
      */
     public function destroy($id)
     {
-        // Find the costume by ID
-        $costume = Costume::findOrFail($id);
-        // Perform the deletion
-        $costume->delete();
-        // Redirect back with a success message
-        return redirect()->route('costume.gallery')->with('success', 'Costume deleted successfully!');
+        $deleteCostume = Costume::where('id', $id)->delete();
+        if($deleteCostume){
+            return redirect()->back()->with('success', 'Berhasil Menghapus Data Kostum');
+        }else {
+            return redirect()->back()->with('error', 'Gagal Menghapus Data Kostum');
+        }
     }
-
 }

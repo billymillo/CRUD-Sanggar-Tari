@@ -29,7 +29,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($costume as $data)
             <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white mt-5 mb-5 ms-16 p-2">
-                <img class="h-96 w-full object-cover rounded-md" src="/images/{{ $data['image']}}" alt="">
+                    <img class="h-96 w-full object-cover rounded-md" src="/images/{{ $data['image']}}" alt="">
                 <div class="px-6 py-4">
                     <div class="font-bold text-xl mb-1">{{ $data['name']}}</div>
                     <div class="font-bold text-l mb-2">Rp. {{ number_format($data['price'], 0, ',', '.')}}</div>
@@ -38,16 +38,19 @@
                 </div>
                 <div class="px-6 pb-2 flex flex-row justify-between">
                     <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        Pesan
+                        <a href="{{route('order.pesan', $data['id'])}}">Pesan</a>
                     </button>
                 @if(Auth::user()->role == 'admin')
                 <div class="flex flex-row justify-end">
                     <a href="{{ route('costume.form.edit', $data['id']) }}">
                         <i class="fa-duotone fa-solid fa-square-pen text-2xl text-blue-700"></i>
-                        </a>
-                        <a href="#" data-modal-target="popup-modal" data-modal-toggle="popup-modal" onclick="deleteCostume('{{ $data->id }}', '{{ $data->name }}')" class="btn btn-danger">
+                    </a>
+                    <a href="#" data-modal-target="popup-modal-delete" data-modal-toggle="popup-modal-delete" onclick="deleteCostume('{{ $data->id }}', '{{ $data->name }}')" class="btn btn-danger">
                         <i class="fa-duotone fa-solid fa-trash-can text-2xl ms-2 text-red-700"></i>
-                        </a>
+                    </a>
+                    <a href="{{ route('order.create') }}">
+                        <i class="fa-solid fa-cart-shopping text-2xl ms-2 text-yellow-400"></i>
+                    </a>
                     </div>
                 @endif
                 </div>
@@ -55,13 +58,14 @@
             @endforeach
         </div>
 
-    <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <form method="POST" action="{{ route('costume.delete', $data->id) }}">
+{{-- MODAL DELETE --}}
+    <div id="popup-modal-delete" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <form method="POST" action="{{route('costume.delete', $data->id)}}">
             @csrf
             @method('DELETE')
         <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal-delete">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -71,15 +75,14 @@
                     <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                     </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this <span id="costume-name"></span>?</h3>
-                    <button data-modal-hide="popup-modal" type="submit" id="confirm-delete" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Apakah Kamu Mau Menghapus Baju Ini? <span id="costume-name"></span>?</h3>
+                    <button data-modal-hide="popup-modal-delete" type="submit" id="confirm-delete" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                         Yes, I'm sure
                     </button>
-                    <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
+                    <button data-modal-hide="popup-modal-delete" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
                 </div>
             </div>
         </div>
-    </form>
     </div>
 
     </div>
@@ -97,8 +100,8 @@
         $('#costume-name').text(name);
 
         // Show the modal (Tailwind)
-        $('#popup-modal').removeClass('hidden'); // Ensure it's visible
-        $('#popup-modal').addClass('flex');
+        $('#popup-modal-delete').removeClass('hidden'); // Ensure it's visible
+        $('#popup-modal-delete').addClass('flex');
     }
 
 
